@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour {
 	bool shouldRotate = true;
 	bool shouldMove = true;
 	bool isOnDiag = false;
+	bool cameraClippingDirty = false;
 
 	int RotateDirection {
 		get {
@@ -75,15 +76,25 @@ public class PlayerController : MonoBehaviour {
 
 		transform.Translate (MoveDirection * MoveAmount);
 		shouldMove = false;
+		cameraClippingDirty = true;
 	}
 
 	void PreventCameraClipping () {
-		er_CameraTransform.localPosition = new Vector3 (0, 1, e_CameraMovementRange.x);
-		if (Physics.Raycast (er_CameraTransform.position, er_CameraTransform.TransformDirection (Vector3.forward), out cameraHit, 5f)) {
-			if (cameraHit.collider.HasTag ("CameraCollider")) {
-				er_CameraTransform.localPosition = new Vector3 (0, 1, Mathf.Clamp(e_CameraMovementRange.x + (cameraHit.point - er_CameraTransform.position).magnitude, e_CameraMovementRange.x, e_CameraMovementRange.y));
-			}
+		if (!cameraClippingDirty) {
+			return;
 		}
+
+		er_CameraTransform.localPosition = new Vector3 (0, 1, e_CameraMovementRange.x);
+
+		if (!Physics.Raycast (er_CameraTransform.position, er_CameraTransform.TransformDirection (Vector3.forward), out cameraHit, 5f)) {
+			return;
+		}
+
+		if (!cameraHit.collider.HasTag ("CameraCollider")) {
+			return;
+		}
+
+		er_CameraTransform.localPosition = new Vector3 (0, 1, Mathf.Clamp(e_CameraMovementRange.x + (cameraHit.point - er_CameraTransform.position).magnitude, e_CameraMovementRange.x, e_CameraMovementRange.y));
 	}
 
 	void RotatePlayer () {
@@ -98,6 +109,7 @@ public class PlayerController : MonoBehaviour {
 
 		transform.Rotate (Vector3.up, e_RotateAmount * RotateDirection);
 		shouldRotate = false;
+		cameraClippingDirty = true;
 		isOnDiag = !isOnDiag;
 	}
 
