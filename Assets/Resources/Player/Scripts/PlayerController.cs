@@ -74,6 +74,12 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
+		if (MoveDirection == Vector3.back) {
+			if (Physics.Raycast (er_EyesTransform.position, transform.TransformDirection (MoveDirection), MoveAmount - er_EyesTransform.localPosition.z + 1)) {
+				return;
+			}
+		}
+
 		transform.Translate (MoveDirection * MoveAmount);
 		shouldMove = false;
 		cameraClippingDirty = true;
