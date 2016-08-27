@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
 	public Transform er_EyesTransform;									//The Transform of the eyes
 	public Transform er_BackEyesTransform;								//The point from where the backwards raycast shoots towards the camera
 
+	public int e_NumberOfTilesToMove = 2;								//The number of tiles to jump when moving once
+
 	RaycastHit cameraHit;
 
 	bool shouldRotate = true;
@@ -79,17 +81,17 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
-		if (Physics.Raycast (er_EyesTransform.position, transform.TransformDirection (MoveDirection), MoveAmount - er_EyesTransform.localPosition.z)) {
+		if (Physics.Raycast (er_EyesTransform.position, transform.TransformDirection (MoveDirection), MoveAmount * e_NumberOfTilesToMove - er_EyesTransform.localPosition.z)) {
 			return;
 		}
 
 		if (MoveDirection == Vector3.back) {
-			if (Physics.Raycast (er_EyesTransform.position, transform.TransformDirection (MoveDirection), MoveAmount - er_EyesTransform.localPosition.z + 1)) {
+			if (Physics.Raycast (er_EyesTransform.position, transform.TransformDirection (MoveDirection), MoveAmount * e_NumberOfTilesToMove - er_EyesTransform.localPosition.z + 1)) {
 				return;
 			}
 		}
 
-		transform.Translate (MoveDirection * MoveAmount);
+		transform.Translate (MoveDirection * MoveAmount * e_NumberOfTilesToMove);
 		shouldMove = false;
 		cameraClippingDirty = true;
 	}
@@ -108,14 +110,10 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
-		Debug.Log ("hiyt");
-
 		if (!cameraHit.collider.HasTag ("CameraCollider")) {
 			cameraClippingDirty = false;
 			return;
 		}
-
-		Debug.Log ((cameraHit.point - er_CameraTransform.position).magnitude);
 
 		er_CameraTransform.localPosition = new Vector3 (0, 1, e_CameraMovementRange.x + (cameraHit.point - er_CameraTransform.position).magnitude);
 
@@ -156,6 +154,7 @@ public class PlayerController : MonoBehaviour {
 		er_CameraTransform = Camera.main.transform;
 		e_CameraMovementRange = new Vector2 (-6f, 3f);
 		e_RotateAmount = 45f;
+		e_NumberOfTilesToMove = 2;
 	}
 
 	void FixedUpdate () {
