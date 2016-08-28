@@ -11,6 +11,9 @@ public class PlayerControllerDrawer : Editor {
 	SerializedProperty BackEyesReference;
 	SerializedProperty RotateAmount;
 	SerializedProperty CameraMovementRange;
+	SerializedProperty NumberOfTilesToMove;
+	SerializedProperty MovementAnimationSpeed;
+	SerializedProperty RotationAnimationSpeed;
 
 	//Helpers
 	float minVal, maxVal;
@@ -22,6 +25,9 @@ public class PlayerControllerDrawer : Editor {
 		BackEyesReference = serializedObject.FindProperty ("er_BackEyesTransform");
 		RotateAmount = serializedObject.FindProperty ("e_RotateAmount");
 		CameraMovementRange = serializedObject.FindProperty ("e_CameraMovementRange");
+		NumberOfTilesToMove = serializedObject.FindProperty ("e_NumberOfTilesToMove");
+		MovementAnimationSpeed = serializedObject.FindProperty ("e_MovementDuration");
+		RotationAnimationSpeed = serializedObject.FindProperty ("e_RotationDuration");
 		minVal = CameraMovementRange.vector2Value.x;
 		maxVal = CameraMovementRange.vector2Value.y;
 	}
@@ -45,6 +51,11 @@ public class PlayerControllerDrawer : Editor {
 		maxVal = EditorGUILayout.FloatField ("", maxVal, GUILayout.MaxWidth (80f));
 		EditorGUILayout.EndHorizontal ();
 		EditorGUILayout.MinMaxSlider (new GUIContent (""), ref minVal, ref maxVal, -15f, 15f);
+
+		EditorGUILayout.Space ();
+		NumberOfTilesToMove.intValue = EditorGUILayout.IntField (new GUIContent ("Number of tiles to move", "The niumber of tiles to move when pressing the move button once"), NumberOfTilesToMove.intValue);
+		MovementAnimationSpeed.floatValue = EditorGUILayout.Slider (new GUIContent ("Movement animation speed", "The duration (in seconds) of moving once"), MovementAnimationSpeed.floatValue, .001f, 1f);
+		RotationAnimationSpeed.floatValue = EditorGUILayout.Slider (new GUIContent ("Rotation animation speed", "The duration (in seconds) of rotating once"), RotationAnimationSpeed.floatValue, .001f, 1f);
 
 		CameraMovementRange.vector2Value = new Vector2 (minVal, maxVal);
 
