@@ -98,6 +98,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 460718, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -129,6 +133,118 @@ Prefab:
     - target: {fileID: 460718, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraRotationRange.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraRotationRange.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[0].tangentMode
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[1].tangentMode
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[2].time
+      value: 0.8118695
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[2].value
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[2].inSlope
+      value: 0.41818398
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[2].outSlope
+      value: 0.41818398
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[2].tangentMode
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[3].time
+      value: 0.97658265
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[3].value
+      value: 0.602124
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[3].inSlope
+      value: 9.108888
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[3].outSlope
+      value: 9.108888
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[3].tangentMode
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[4].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[4].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[4].inSlope
+      value: 16.990648
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[4].outSlope
+      value: 16.990648
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraClippingCurve.m_Curve.Array.data[4].tangentMode
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11405568, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}
+      propertyPath: e_CameraMovementRange.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 09d5976393d071a44bd5184c9b0e5ba6, type: 2}

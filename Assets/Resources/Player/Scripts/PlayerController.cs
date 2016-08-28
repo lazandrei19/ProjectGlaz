@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class PlayerController : MonoBehaviour {
+	#region structs
 	//private structs used for easier animation
 	struct MovementAnimationMetadata {
 		public float length;
@@ -35,12 +36,10 @@ public class PlayerController : MonoBehaviour {
 			rotationDirection = rD;
 		}
 	}
+	#endregion
 
-
+	#region public variables
 	//Editor modifiable variables
-	public Transform er_CameraTransform;								//The Transform of the camera
-	public Vector2 e_CameraMovementRange = new Vector2 (-6f, 3f);		//The range in which the camera is allowed to move on the Z-axis
-
 	public float e_RotateAmount = 45f;									//The amount by which the player rotates when one of the rotation keys is pressed
 
 	public Transform er_EyesTransform;									//The Transform of the eyes
@@ -51,6 +50,15 @@ public class PlayerController : MonoBehaviour {
 	public float e_MovementDuration = .1f;								//The duration (in seconds) of moving once
 	public float e_RotationDuration = .1f;								//The duration (in seconds) of rotating once
 
+
+	public Transform er_CameraTransform;								//The Transform of the camera
+	public Transform er_PivotTransform;									//The Transform of the pivot
+	public Vector2 e_CameraMovementRange = new Vector2 (-6f, 0f);		//The range in which the camera is allowed to move on the Z-axis
+	public Vector2 e_CameraRotationRange = new Vector2 (30f, 90f);		//The range in which the camera is alowed to rotate around the X-axis
+	public AnimationCurve e_CameraClippingCurve = AnimationCurve.Linear (0f, 0f, 1f, 1f);
+	#endregion
+
+	#region private variables
 	//private vars used for code speedup
 	bool shouldRotate = true;
 	bool shouldMove = true;
@@ -62,7 +70,9 @@ public class PlayerController : MonoBehaviour {
 	//Private vars used for camera adjustments
 	RaycastHit cameraHit;
 	float maxCameraRaycast;
+	#endregion
 
+	#region properties
 	//private properties used for easier code reading
 	int RotateDirection {
 		get {
@@ -101,6 +111,7 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
+	#endregion
 
 	void Awake () {
 		// Hide the cursor and lock it in the middle
@@ -109,6 +120,7 @@ public class PlayerController : MonoBehaviour {
 		maxCameraRaycast = Mathf.Max (Mathf.Abs (e_CameraMovementRange.x), Mathf.Abs (e_CameraMovementRange.y));
 	}
 
+	#region move player
 	void MovePlayer () {
 		if (movementMetadata.isAnimating) {
 			float progress = Time.deltaTime / movementMetadata.length;
@@ -144,38 +156,9 @@ public class PlayerController : MonoBehaviour {
 		shouldMove = false;
 		cameraClippingDirty = true;
 	}
+	#endregion
 
-	void PreventCameraClipping () {
-		if (!cameraClippingDirty) {
-			return;
-		}
-
-		er_CameraTransform.localPosition = new Vector3 (0, 1, e_CameraMovementRange.x);
-		er_CameraTransform.localEulerAngles = new Vector3 (30, 0, 0);
-
-		if (!Physics.Raycast (er_BackEyesTransform.position, er_CameraTransform.TransformDirection (Vector3.back), out cameraHit, maxCameraRaycast)) {
-			cameraClippingDirty = false;
-			return;
-		}
-
-		if (!cameraHit.collider.HasTag ("CameraCollider")) {
-			cameraClippingDirty = false;
-			return;
-		}
-
-		er_CameraTransform.localPosition = new Vector3 (0, 1, e_CameraMovementRange.x + (cameraHit.point - er_CameraTransform.position).magnitude);
-
-		if (er_CameraTransform.localPosition.z > -2f && er_CameraTransform.localPosition.z < 2.5f) {
-			er_CameraTransform.localPosition = new Vector3 (0f, 1f, 3f);
-		}
-
-		if (er_CameraTransform.localPosition.z > -2f) {
-			er_CameraTransform.localEulerAngles = new Vector3 (30, 180, 0);
-		}
-
-		cameraClippingDirty = false;
-	}
-
+	#region rotate player
 	void RotatePlayer () {
 		if (rotationMetadata.isAnimating) {
 			float progress = Time.deltaTime / rotationMetadata.length;
@@ -202,16 +185,62 @@ public class PlayerController : MonoBehaviour {
 		cameraClippingDirty = true;
 		isOnDiag = !isOnDiag;
 	}
+	#endregion
 
+	#region fix position
 	void FixPosition () {
 		if (rotationMetadata.isAnimating || movementMetadata.isAnimating) {
 			return;
 		}
 
-		Debug.Log (transform.eulerAngles);
-
 		transform.position = new Vector3 (Mathf.Round (transform.position.x), Mathf.Round (transform.position.y), Mathf.Round (transform.position.z));
 		transform.eulerAngles = new Vector3 (Mathf.Round (transform.eulerAngles.x), Mathf.Round (transform.eulerAngles.y), Mathf.Round (transform.eulerAngles.z));
+	}
+	#endregion
+
+	#region prevent camera clipping
+	void PreventCameraClipping () {
+		if (!cameraClippingDirty) {
+			return;
+		}
+
+		if (movementMetadata.isAnimating || rotationMetadata.isAnimating) {
+			return;
+		}
+
+		er_CameraTransform.localPosition = new Vector3 (0f, 0f, e_CameraMovementRange.x);
+		er_PivotTransform.localEulerAngles = new Vector3 (e_CameraRotationRange.x, 0f, 0f);
+
+		if (!Physics.Raycast (er_BackEyesTransform.position, er_CameraTransform.TransformDirection (Vector3.back), out cameraHit, maxCameraRaycast)) {
+			cameraClippingDirty = false;
+			return;
+		}
+
+		if (!cameraHit.collider.HasTag ("CameraCollider")) {
+			cameraClippingDirty = false;
+			return;
+		}
+
+		//Maths
+		float magnitude = (cameraHit.point - er_CameraTransform.position).magnitude;
+		float movementRange = Mathf.Abs(e_CameraMovementRange.x - e_CameraMovementRange.y);
+		float rotationRange = Mathf.Abs(e_CameraRotationRange.x - e_CameraRotationRange.y);
+		float progress = magnitude / movementRange;
+
+		Debug.Log (progress);
+
+		er_CameraTransform.localPosition = new Vector3 (0, 0, e_CameraMovementRange.x + magnitude);
+		er_PivotTransform.localEulerAngles = new Vector3 (e_CameraRotationRange.x + e_CameraClippingCurve.Evaluate (progress) * rotationRange, 0, 0);
+
+		cameraClippingDirty = false;
+	}
+	#endregion
+
+	void FixedUpdate () {
+		MovePlayer ();
+		RotatePlayer ();
+		FixPosition ();
+		PreventCameraClipping ();
 	}
 
 	//Activates on "Reset component"
@@ -220,12 +249,5 @@ public class PlayerController : MonoBehaviour {
 		e_CameraMovementRange = new Vector2 (-6f, 3f);
 		e_RotateAmount = 45f;
 		e_NumberOfTilesToMove = 2;
-	}
-
-	void FixedUpdate () {
-		MovePlayer ();
-		RotatePlayer ();
-		FixPosition ();
-		PreventCameraClipping ();
 	}
 }
