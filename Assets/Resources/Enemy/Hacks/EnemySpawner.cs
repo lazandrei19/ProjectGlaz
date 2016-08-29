@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyManager : MonoBehaviour {
+public class EnemySpawner : MonoBehaviour {
 
 	GameObject enemy_prefab;
 
@@ -11,10 +11,10 @@ public class EnemyManager : MonoBehaviour {
 	void Start () {
 		enemy_prefab = Resources.Load ("Player/Prefabs/Enemy") as GameObject;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey (KeyCode.E)) {
+		if (Input.GetKey (KeyCode.R)) {
 			if (!hasSpawnedThisRound) {
 				hasSpawnedThisRound = true;
 				GameObject enemy = Instantiate (enemy_prefab);
