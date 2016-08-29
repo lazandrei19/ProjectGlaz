@@ -36,6 +36,22 @@ public class PlayerController : MonoBehaviour {
 			rotationDirection = rD;
 		}
 	}
+
+	struct ClippingAnimationMetadata {
+		public float length;
+		public float progress;
+		public bool isAnimating;
+		public float rotation;
+		public float distance;
+
+		public ClippingAnimationMetadata (float l, float d, float r) {
+			length = l;
+			progress = 0f;
+			isAnimating = (l == 0f)? false : true;
+			rotation = r;
+			distance = d;
+		}
+	}
 	#endregion
 
 	#region public variables
@@ -50,6 +66,7 @@ public class PlayerController : MonoBehaviour {
 	public float e_MovementDuration = .1f;								//The duration (in seconds) of moving once
 	public float e_RotationDuration = .1f;								//The duration (in seconds) of rotating once
 
+	public float e_ClippingDuration = .1f;								//The duration (in seconds) of the clipping animation
 
 	public Transform er_CameraTransform;								//The Transform of the camera
 	public Transform er_PivotTransform;									//The Transform of the pivot
@@ -66,6 +83,7 @@ public class PlayerController : MonoBehaviour {
 	bool cameraClippingDirty = false;
 	MovementAnimationMetadata movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
 	RotationAnimationMetadata rotationMetadata = new RotationAnimationMetadata (0f, 0);
+	ClippingAnimationMetadata clippingMetadata = new ClippingAnimationMetadata (0f, 0f, 0f);
 
 	//Private vars used for camera adjustments
 	RaycastHit cameraHit;
@@ -123,7 +141,7 @@ public class PlayerController : MonoBehaviour {
 	#region move player
 	void MovePlayer () {
 		if (movementMetadata.isAnimating) {
-			float progress = Time.deltaTime / movementMetadata.length;
+			float progress = Time.fixedDeltaTime / movementMetadata.length;
 			if (movementMetadata.progress + progress >= 1f) {
 				progress = 1f - movementMetadata.progress;
 				movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
@@ -200,6 +218,18 @@ public class PlayerController : MonoBehaviour {
 
 	#region prevent camera clipping
 	void PreventCameraClipping () {
+		if (clippingMetadata.isAnimating) {
+			float animProgress = Time.deltaTime / clippingMetadata.length;
+			if (clippingMetadata.progress >= .99f) {
+				animProgress = 1f - clippingMetadata.progress;
+				clippingMetadata = new ClippingAnimationMetadata (0f, 0f, 0f);
+			}
+			clippingMetadata.progress += animProgress;
+			er_CameraTransform.Translate (new Vector3 (0f, 0f, clippingMetadata.distance * animProgress));
+			er_PivotTransform.Rotate (new Vector3 (clippingMetadata.rotation * animProgress, 0f, 0f));
+			return;
+		}
+
 		if (!cameraClippingDirty) {
 			return;
 		}
@@ -208,29 +238,67 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
+		float initialPos = er_CameraTransform.localPosition.z;
+		float initialRot = er_PivotTransform.localEulerAngles.x;
+
 		er_CameraTransform.localPosition = new Vector3 (0f, 0f, e_CameraMovementRange.x);
 		er_PivotTransform.localEulerAngles = new Vector3 (e_CameraRotationRange.x, 0f, 0f);
 
 		if (!Physics.Raycast (er_BackEyesTransform.position, er_CameraTransform.TransformDirection (Vector3.back), out cameraHit, maxCameraRaycast)) {
+			if (initialPos == e_CameraMovementRange.x) {
+				cameraClippingDirty = false;
+				return;
+			}
+
+			//Same complicated math, but put in one line. Will prettyfy
+			float aTM = initialPos - e_CameraMovementRange.x;
+			float aTR = initialRot - (e_CameraRotationRange.x + e_CameraClippingCurve.Evaluate (0f) * Mathf.Abs(e_CameraRotationRange.x - e_CameraRotationRange.y));
+
+			er_CameraTransform.localPosition = new Vector3 (0f, 0f, initialPos);
+			er_PivotTransform.localEulerAngles = new Vector3 (initialRot, 0f, 0f);
+
+			clippingMetadata = new ClippingAnimationMetadata (e_ClippingDuration, -aTM, -aTR);
+
 			cameraClippingDirty = false;
 			return;
 		}
 
 		if (!cameraHit.collider.HasTag ("CameraCollider")) {
+			if (initialPos == e_CameraMovementRange.x) {
+				cameraClippingDirty = false;
+				return;
+			}
+
+			//Same complicated math, but put in one line. Will prettyfy
+			float aTM = initialPos - e_CameraMovementRange.x;
+			float aTR = initialRot - (e_CameraRotationRange.x + e_CameraClippingCurve.Evaluate (0f) * Mathf.Abs(e_CameraRotationRange.x - e_CameraRotationRange.y));
+
+			er_CameraTransform.localPosition = new Vector3 (0f, 0f, initialPos);
+			er_PivotTransform.localEulerAngles = new Vector3 (initialRot, 0f, 0f);
+
+			clippingMetadata = new ClippingAnimationMetadata (e_ClippingDuration, -aTM, -aTR);
+
 			cameraClippingDirty = false;
 			return;
 		}
 
-		//Maths
-		float magnitude = (cameraHit.point - er_CameraTransform.position).magnitude;
+		//Complicated math
+		float movementDelta = (cameraHit.point - er_CameraTransform.position).magnitude;
+		float targetMovePos = e_CameraMovementRange.x + movementDelta;
 		float movementRange = Mathf.Abs(e_CameraMovementRange.x - e_CameraMovementRange.y);
 		float rotationRange = Mathf.Abs(e_CameraRotationRange.x - e_CameraRotationRange.y);
-		float progress = magnitude / movementRange;
+		float progress = movementDelta / movementRange;
+		float rotationDelta = e_CameraClippingCurve.Evaluate (progress) * rotationRange;
+		float targetRotatePos = e_CameraRotationRange.x + rotationDelta;
 
-		Debug.Log (progress);
+		float ammountToMove = initialPos - targetMovePos;
+		float ammountToRotate = initialRot - targetRotatePos;
 
-		er_CameraTransform.localPosition = new Vector3 (0, 0, e_CameraMovementRange.x + magnitude);
-		er_PivotTransform.localEulerAngles = new Vector3 (e_CameraRotationRange.x + e_CameraClippingCurve.Evaluate (progress) * rotationRange, 0, 0);
+		er_CameraTransform.localPosition = new Vector3 (0f, 0f, initialPos);
+		er_PivotTransform.localEulerAngles = new Vector3 (initialRot, 0f, 0f);
+
+		//I don't know why this is negative. Probably something in my math is off. It works like this. I'll change it later
+		clippingMetadata = new ClippingAnimationMetadata (e_ClippingDuration, -ammountToMove, -ammountToRotate);
 
 		cameraClippingDirty = false;
 	}
