@@ -20,6 +20,7 @@ public class PlayerControllerDrawer : Editor {
 
 	//Helpers
 	float minCMRVal, minCRRVal, maxCMRVal, maxCRRVal;
+	bool eightWayMovement;
 
 	void OnEnable () {
 		//Initialization of all property fields
@@ -38,6 +39,7 @@ public class PlayerControllerDrawer : Editor {
 		minCRRVal = CameraRotationRange.vector2Value.x;
 		maxCMRVal = CameraMovementRange.vector2Value.y;
 		maxCRRVal = CameraRotationRange.vector2Value.y;
+		eightWayMovement = (RotateAmount.floatValue == 45f);
 	}
 
 	public override void OnInspectorGUI() {
@@ -51,7 +53,7 @@ public class PlayerControllerDrawer : Editor {
 		EditorGUILayout.PropertyField (BackEyesReference, new GUIContent ("Back eyes Reference", "A reference to the point from which raycasts are shoot towards the camera to prevent clipping"));
 
 		EditorGUILayout.Space ();
-		RotateAmount.floatValue = EditorGUILayout.IntSlider (new GUIContent ("Rotate amount", "The amount of degrees to rotate when pressing the rotate button once"), Mathf.RoundToInt (RotateAmount.floatValue), 1, 360);
+		eightWayMovement = EditorGUILayout.Toggle (new GUIContent ("Rotate amount", "The amount of degrees to rotate when pressing the rotate button once"), eightWayMovement);
 
 		EditorGUILayout.Space ();
 		EditorGUILayout.BeginHorizontal ();
@@ -66,7 +68,8 @@ public class PlayerControllerDrawer : Editor {
 		maxCRRVal = EditorGUILayout.FloatField ("", maxCRRVal, GUILayout.MaxWidth (80f));
 		EditorGUILayout.EndHorizontal ();
 		EditorGUILayout.MinMaxSlider (new GUIContent (""), ref minCRRVal, ref maxCRRVal, 0f, 180f);
-		CameraCurve.animationCurveValue = EditorGUILayout.CurveField (new GUIContent ("Camera clipping curve", "The curve which the camera follows for the clipping process"), CameraCurve.animationCurveValue, Color.red, new Rect (0f, 0f, 1f, 1f));
+		EditorGUILayout.LabelField (new GUIContent ("Camera clipping curve", "The curve which the camera follows for the clipping process"));
+		CameraCurve.animationCurveValue = EditorGUILayout.CurveField ("", CameraCurve.animationCurveValue, Color.red, new Rect (0f, 0f, 1f, 1f), GUILayout.MinWidth (200f), GUILayout.Height (200f));
 
 
 		EditorGUILayout.Space ();
@@ -76,6 +79,8 @@ public class PlayerControllerDrawer : Editor {
 
 		CameraMovementRange.vector2Value = new Vector2 (minCMRVal, maxCMRVal);
 		CameraRotationRange.vector2Value = new Vector2 (minCRRVal, maxCRRVal);
+
+		RotateAmount.floatValue = (eightWayMovement) ? 45f : 90f;
 
 		//Save modified changes
 		serializedObject.ApplyModifiedProperties();

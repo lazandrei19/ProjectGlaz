@@ -201,7 +201,9 @@ public class PlayerController : MonoBehaviour {
 		rotationMetadata = new RotationAnimationMetadata (e_RotationDuration, RotateDirection);
 		shouldRotate = false;
 		cameraClippingDirty = true;
-		isOnDiag = !isOnDiag;
+		if (e_RotateAmount == 45f) {
+			isOnDiag = !isOnDiag;
+		}
 	}
 	#endregion
 
