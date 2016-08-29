@@ -145,9 +145,14 @@ public class PlayerController : MonoBehaviour {
 			if (movementMetadata.progress + progress >= 1f) {
 				progress = 1f - movementMetadata.progress;
 				movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
+				GameloopController.glc.turn = Turn.ENEMY;
 			}
 			movementMetadata.progress += progress;
 			transform.Translate (movementMetadata.moveDirection * movementMetadata.moveAmount * e_NumberOfTilesToMove * progress);
+			return;
+		}
+
+		if (GameloopController.glc.turn != Turn.PLAYER) {
 			return;
 		}
 
@@ -186,6 +191,10 @@ public class PlayerController : MonoBehaviour {
 			}
 			rotationMetadata.progress += progress;
 			transform.Rotate (Vector3.up, e_RotateAmount * rotationMetadata.rotationDirection * progress);
+			return;
+		}
+
+		if (GameloopController.glc.turn != Turn.PLAYER) {
 			return;
 		}
 
