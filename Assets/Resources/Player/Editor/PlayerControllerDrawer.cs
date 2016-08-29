@@ -53,7 +53,7 @@ public class PlayerControllerDrawer : Editor {
 		EditorGUILayout.PropertyField (BackEyesReference, new GUIContent ("Back eyes Reference", "A reference to the point from which raycasts are shoot towards the camera to prevent clipping"));
 
 		EditorGUILayout.Space ();
-		eightWayMovement = EditorGUILayout.Toggle (new GUIContent ("Rotate amount", "The amount of degrees to rotate when pressing the rotate button once"), eightWayMovement);
+		eightWayMovement = EditorGUILayout.Toggle (new GUIContent ("8-way movement", "If this is checked, the player will be able to move on diagonals besides the 4 directions"), eightWayMovement);
 
 		EditorGUILayout.Space ();
 		EditorGUILayout.BeginHorizontal ();
