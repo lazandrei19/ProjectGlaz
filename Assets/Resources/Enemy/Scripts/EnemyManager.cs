@@ -1,0 +1,30 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class EnemyManager : MonoBehaviour {
+
+	static EnemyCollection enemies = new EnemyCollection ();
+
+	public static void Register (EnemyController enemy) {
+		enemies.Add (enemy);
+	}
+
+	public static void Done (EnemyController enemy) {
+		enemies.Done (enemy);
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		if (enemies.isDone) {
+			GameloopController.glc.turn = Turn.PLAYER;
+			enemies.Reset ();
+		}
+
+		if (GameloopController.glc.turn != Turn.ENEMY) {
+			return;
+		}
+
+		enemies.Think ();
+	}
+}

@@ -254,26 +254,27 @@ MonoBehaviour:
   e_NumberOfTilesToMove: 2
   e_MovementDuration: 0.1
   e_RotationDuration: 0.1
+  e_ClippingDuration: 0.1
   er_CameraTransform: {fileID: 400448}
   er_PivotTransform: {fileID: 426134}
-  e_CameraMovementRange: {x: -6, y: 3}
-  e_CameraRotationRange: {x: 0, y: 0}
+  e_CameraMovementRange: {x: -6, y: 0}
+  e_CameraRotationRange: {x: 30, y: 90}
   e_CameraClippingCurve:
     serializedVersion: 2
     m_Curve:
     - time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 10
     - time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 10
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
 --- !u!114 &11420996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -298,7 +299,7 @@ CapsuleCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 121448}
-  m_Material: {fileID: 13400000, guid: 055973f10b8d79c4087dbaab89b04b21, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5

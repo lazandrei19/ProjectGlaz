@@ -145,6 +145,7 @@ public class PlayerController : MonoBehaviour {
 			if (movementMetadata.progress + progress >= 1f) {
 				progress = 1f - movementMetadata.progress;
 				movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
+
 				GameloopController.glc.turn = Turn.ENEMY;
 			}
 			movementMetadata.progress += progress;
