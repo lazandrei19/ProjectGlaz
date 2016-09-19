@@ -40,6 +40,10 @@ public class MenuManager : MonoBehaviour {
 			if (GUI.Button (new Rect (50, 160, 200, 100), "Quit")) {
 				Application.Quit ();
 			}
+
+			if (GUI.Button (new Rect (50, 270, 200, 100), "Save")) {
+				GameController.gc.Save ();
+			}
 		}
 	}
 }

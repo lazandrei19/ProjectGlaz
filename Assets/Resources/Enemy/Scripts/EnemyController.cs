@@ -1,79 +1,9 @@
 ﻿using UnityEngine;
 using ExtensionHelper;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
-public enum EnemyActionType {
-	MOVE,
-	ROTATE
-}
-
-public class InputFeeder {
-	List <char> chars = new List <char> ();
-	int index = 0;
-
-	public InputFeeder (string i) {
-		if (i.Count () > 0) {
-			this.chars = Regex.Replace (i.ToUpperInvariant (), ".", " $0").ToCharArray ().ToList ();
-		}
-	}
-
-	public bool HasLeft {
-		get {
-			return index < chars.Count;
-		}
-	}
-
-	public char Next {
-		get {
-			if (!HasLeft) {
-				index = 0;
-			}
-			Debug.Log (index);
-			return chars [index++];
-		}
-	}
-}
 
 public class EnemyController : MonoBehaviour {
-	//Control
-	char input = ' ';
-
-	#region structs
-	//private structs used for easier animation
-	struct MovementAnimationMetadata {
-		public float length;
-		public float progress;
-		public bool isAnimating;
-		public Vector3 moveDirection;
-		public float moveAmount;
-
-		public MovementAnimationMetadata (float l, Vector3 mD, float mA) {
-			length = l;
-			progress = 0f;
-			isAnimating = (l == 0f)? false : true;
-			moveDirection = mD;
-			moveAmount = mA;
-		}
-	}
-
-	struct RotationAnimationMetadata {
-		public float length;
-		public float progress;
-		public bool isAnimating;
-		public int rotationDirection;
-
-		public RotationAnimationMetadata (float l, int rD) {
-			length = l;
-			progress = 0f;
-			isAnimating = (l == 0f)? false : true;
-			rotationDirection = rD;
-		}
-	}
-	#endregion
-
 	#region public variables
 	//Editor modifiable variables
 	public float e_RotateAmount = 45f;									//The amount by which the player rotates when one of the rotation keys is pressed
@@ -84,6 +14,8 @@ public class EnemyController : MonoBehaviour {
 
 	public float e_MovementDuration = .1f;								//The duration (in seconds) of moving once
 	public float e_RotationDuration = .1f;								//The duration (in seconds) of rotating once
+
+	public IEnemyBrain enemyBrain;												//The default AI to use
 	#endregion
 
 	#region private variables
@@ -92,9 +24,10 @@ public class EnemyController : MonoBehaviour {
 	bool shouldMove = true;
 	bool isOnDiag = false;
 	bool working = false;
-	MovementAnimationMetadata movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
-	RotationAnimationMetadata rotationMetadata = new RotationAnimationMetadata (0f, 0);
+	Structs.MovementAnimationMetadata movementMetadata = new Structs.MovementAnimationMetadata (0f, Vector3.zero, 0f);
+	Structs.RotationAnimationMetadata rotationMetadata = new Structs.RotationAnimationMetadata (0f, 0);
 	InputFeeder inputFeeder;
+	char input = ' ';
 	#endregion
 
 	#region properties
@@ -145,7 +78,7 @@ public class EnemyController : MonoBehaviour {
 
 	void Start () {
 		EnemyManager.Register (this);
-		inputFeeder = new InputFeeder ("wsswadda");
+		inputFeeder = new InputFeeder ();
 	}
 
 	#region move player
@@ -154,7 +87,7 @@ public class EnemyController : MonoBehaviour {
 			float progress = Time.fixedDeltaTime / movementMetadata.length;
 			if (movementMetadata.progress + progress >= 1f) {
 				progress = 1f - movementMetadata.progress;
-				movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
+				movementMetadata = new Structs.MovementAnimationMetadata (0f, Vector3.zero, 0f);
 
 				EnemyManager.Done (this);
 			}
@@ -186,8 +119,7 @@ public class EnemyController : MonoBehaviour {
 			}
 		}
 
-		Debug.Log (input);
-		movementMetadata = new MovementAnimationMetadata (e_MovementDuration, MoveDirection, MoveAmount);
+		movementMetadata = new Structs.MovementAnimationMetadata (e_MovementDuration, MoveDirection, MoveAmount);
 		shouldMove = false;
 	}
 	#endregion
@@ -198,7 +130,7 @@ public class EnemyController : MonoBehaviour {
 			float progress = Time.deltaTime / rotationMetadata.length;
 			if (rotationMetadata.progress + progress >= 1f) {
 				progress = 1f - rotationMetadata.progress;
-				rotationMetadata = new RotationAnimationMetadata (0f, 0);
+				rotationMetadata = new Structs.RotationAnimationMetadata (0f, 0);
 			}
 			rotationMetadata.progress += progress;
 			transform.Rotate (Vector3.up, e_RotateAmount * rotationMetadata.rotationDirection * progress);
@@ -218,7 +150,7 @@ public class EnemyController : MonoBehaviour {
 			return;
 		}
 
-		rotationMetadata = new RotationAnimationMetadata (e_RotationDuration, RotateDirection);
+		rotationMetadata = new Structs.RotationAnimationMetadata (e_RotationDuration, RotateDirection);
 		shouldRotate = false;
 		if (e_RotateAmount == 45f) {
 			isOnDiag = !isOnDiag;
@@ -239,6 +171,7 @@ public class EnemyController : MonoBehaviour {
 
 	#region enemy specific functions
 	public void Think () {
+		inputFeeder = enemyBrain.Think (this, inputFeeder);
 		working = true;
 	}
 

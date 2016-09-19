@@ -5,55 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class PlayerController : MonoBehaviour {
-	#region structs
-	//private structs used for easier animation
-	struct MovementAnimationMetadata {
-		public float length;
-		public float progress;
-		public bool isAnimating;
-		public Vector3 moveDirection;
-		public float moveAmount;
-
-		public MovementAnimationMetadata (float l, Vector3 mD, float mA) {
-			length = l;
-			progress = 0f;
-			isAnimating = (l == 0f)? false : true;
-			moveDirection = mD;
-			moveAmount = mA;
-		}
-	}
-
-	struct RotationAnimationMetadata {
-		public float length;
-		public float progress;
-		public bool isAnimating;
-		public int rotationDirection;
-
-		public RotationAnimationMetadata (float l, int rD) {
-			length = l;
-			progress = 0f;
-			isAnimating = (l == 0f)? false : true;
-			rotationDirection = rD;
-		}
-	}
-
-	struct ClippingAnimationMetadata {
-		public float length;
-		public float progress;
-		public bool isAnimating;
-		public float rotation;
-		public float distance;
-
-		public ClippingAnimationMetadata (float l, float d, float r) {
-			length = l;
-			progress = 0f;
-			isAnimating = (l == 0f)? false : true;
-			rotation = r;
-			distance = d;
-		}
-	}
-	#endregion
-
 	#region public variables
 	//Editor modifiable variables
 	public float e_RotateAmount = 45f;									//The amount by which the player rotates when one of the rotation keys is pressed
@@ -81,9 +32,9 @@ public class PlayerController : MonoBehaviour {
 	bool shouldMove = true;
 	bool isOnDiag = false;
 	bool cameraClippingDirty = false;
-	MovementAnimationMetadata movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
-	RotationAnimationMetadata rotationMetadata = new RotationAnimationMetadata (0f, 0);
-	ClippingAnimationMetadata clippingMetadata = new ClippingAnimationMetadata (0f, 0f, 0f);
+	Structs.MovementAnimationMetadata movementMetadata = new Structs.MovementAnimationMetadata (0f, Vector3.zero, 0f);
+	Structs.RotationAnimationMetadata rotationMetadata = new Structs.RotationAnimationMetadata (0f, 0);
+	Structs.ClippingAnimationMetadata clippingMetadata = new Structs.ClippingAnimationMetadata (0f, 0f, 0f);
 
 	//Private vars used for camera adjustments
 	RaycastHit cameraHit;
@@ -142,7 +93,7 @@ public class PlayerController : MonoBehaviour {
 			float progress = Time.fixedDeltaTime / movementMetadata.length;
 			if (movementMetadata.progress + progress >= 1f) {
 				progress = 1f - movementMetadata.progress;
-				movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
+				movementMetadata = new Structs.MovementAnimationMetadata (0f, Vector3.zero, 0f);
 				}
 			movementMetadata.progress += progress;
 			transform.Translate (movementMetadata.moveDirection * movementMetadata.moveAmount * e_NumberOfTilesToMove * progress);
@@ -172,7 +123,7 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		movementMetadata = new MovementAnimationMetadata (e_MovementDuration, MoveDirection, MoveAmount);
+		movementMetadata = new Structs.MovementAnimationMetadata (e_MovementDuration, MoveDirection, MoveAmount);
 		shouldMove = false;
 		cameraClippingDirty = true;
 		GameController.gc.Get <GameloopController> ("Managers/GLC").turn = Turn.ENEMY;
@@ -185,7 +136,7 @@ public class PlayerController : MonoBehaviour {
 			float progress = Time.deltaTime / rotationMetadata.length;
 			if (rotationMetadata.progress + progress >= 1f) {
 				progress = 1f - rotationMetadata.progress;
-				rotationMetadata = new RotationAnimationMetadata (0f, 0);
+				rotationMetadata = new Structs.RotationAnimationMetadata (0f, 0);
 			}
 			rotationMetadata.progress += progress;
 			transform.Rotate (Vector3.up, e_RotateAmount * rotationMetadata.rotationDirection * progress);
@@ -205,7 +156,7 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
-		rotationMetadata = new RotationAnimationMetadata (e_RotationDuration, RotateDirection);
+		rotationMetadata = new Structs.RotationAnimationMetadata (e_RotationDuration, RotateDirection);
 		shouldRotate = false;
 		cameraClippingDirty = true;
 		if (e_RotateAmount == 45f) {
@@ -231,7 +182,7 @@ public class PlayerController : MonoBehaviour {
 			float animProgress = Time.deltaTime / clippingMetadata.length;
 			if (clippingMetadata.progress >= .99f) {
 				animProgress = 1f - clippingMetadata.progress;
-				clippingMetadata = new ClippingAnimationMetadata (0f, 0f, 0f);
+				clippingMetadata = new Structs.ClippingAnimationMetadata (0f, 0f, 0f);
 			}
 			clippingMetadata.progress += animProgress;
 			er_CameraTransform.Translate (new Vector3 (0f, 0f, clippingMetadata.distance * animProgress));
@@ -266,7 +217,7 @@ public class PlayerController : MonoBehaviour {
 			er_CameraTransform.localPosition = new Vector3 (0f, 0f, initialPos);
 			er_PivotTransform.localEulerAngles = new Vector3 (initialRot, 0f, 0f);
 
-			clippingMetadata = new ClippingAnimationMetadata (e_ClippingDuration, -aTM, -aTR);
+			clippingMetadata = new Structs.ClippingAnimationMetadata (e_ClippingDuration, -aTM, -aTR);
 
 			cameraClippingDirty = false;
 			return;
@@ -285,7 +236,7 @@ public class PlayerController : MonoBehaviour {
 			er_CameraTransform.localPosition = new Vector3 (0f, 0f, initialPos);
 			er_PivotTransform.localEulerAngles = new Vector3 (initialRot, 0f, 0f);
 
-			clippingMetadata = new ClippingAnimationMetadata (e_ClippingDuration, -aTM, -aTR);
+			clippingMetadata = new Structs.ClippingAnimationMetadata (e_ClippingDuration, -aTM, -aTR);
 
 			cameraClippingDirty = false;
 			return;
@@ -300,14 +251,14 @@ public class PlayerController : MonoBehaviour {
 		float rotationDelta = e_CameraClippingCurve.Evaluate (progress) * rotationRange;
 		float targetRotatePos = e_CameraRotationRange.x + rotationDelta;
 
-		float ammountToMove = initialPos - targetMovePos;
-		float ammountToRotate = initialRot - targetRotatePos;
+		float ammountToMove = targetMovePos - initialPos;
+		float ammountToRotate = targetRotatePos - initialRot;
 
 		er_CameraTransform.localPosition = new Vector3 (0f, 0f, initialPos);
 		er_PivotTransform.localEulerAngles = new Vector3 (initialRot, 0f, 0f);
 
 		//I don't know why this is negative. Probably something in my math is off. It works like this. I'll change it later
-		clippingMetadata = new ClippingAnimationMetadata (e_ClippingDuration, -ammountToMove, -ammountToRotate);
+		clippingMetadata = new Structs.ClippingAnimationMetadata (e_ClippingDuration, ammountToMove, ammountToRotate);
 
 		cameraClippingDirty = false;
 	}

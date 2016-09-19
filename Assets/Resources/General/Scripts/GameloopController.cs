@@ -1,11 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum Turn {
-	PLAYER,
-	ENEMY
-}
-
+[System.Serializable]
 public class GameloopController {
 	public Turn turn;
 

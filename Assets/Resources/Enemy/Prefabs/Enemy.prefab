@@ -124,6 +124,7 @@ MonoBehaviour:
   e_NumberOfTilesToMove: 2
   e_MovementDuration: 0.1
   e_RotationDuration: 0.1
+  enemyBrain: {fileID: 11400000, guid: 00393f9cbaf5f69429ba42b6f3447ca0, type: 2}
 --- !u!136 &136000012824824278
 CapsuleCollider:
   m_ObjectHideFlags: 1
