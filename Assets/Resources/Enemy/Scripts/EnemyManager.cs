@@ -17,11 +17,11 @@ public class EnemyManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (enemies.isDone) {
-			GameloopController.glc.turn = Turn.PLAYER;
+			GameController.gc.Get <GameloopController> ("Managers/GLC").turn = Turn.PLAYER;
 			enemies.Reset ();
 		}
 
-		if (GameloopController.glc.turn != Turn.ENEMY) {
+		if (GameController.gc.Get <GameloopController> ("Managers/GLC").turn != Turn.ENEMY) {
 			return;
 		}
 

@@ -16,7 +16,7 @@ public class InputFeeder {
 
 	public InputFeeder (string i) {
 		if (i.Count () > 0) {
-			this.chars = Regex.Replace (i.ToUpperInvariant (), ".", " $0").Substring (1).ToCharArray ().ToList ();
+			this.chars = Regex.Replace (i.ToUpperInvariant (), ".", " $0").ToCharArray ().ToList ();
 		}
 	}
 
@@ -28,6 +28,10 @@ public class InputFeeder {
 
 	public char Next {
 		get {
+			if (!HasLeft) {
+				index = 0;
+			}
+			Debug.Log (index);
 			return chars [index++];
 		}
 	}
@@ -67,11 +71,6 @@ public class EnemyController : MonoBehaviour {
 			isAnimating = (l == 0f)? false : true;
 			rotationDirection = rD;
 		}
-	}
-
-	struct EnemyAction {
-		public EnemyActionType type;
-
 	}
 	#endregion
 
@@ -146,7 +145,7 @@ public class EnemyController : MonoBehaviour {
 
 	void Start () {
 		EnemyManager.Register (this);
-		inputFeeder = new InputFeeder ("");
+		inputFeeder = new InputFeeder ("wsswadda");
 	}
 
 	#region move player
@@ -157,14 +156,14 @@ public class EnemyController : MonoBehaviour {
 				progress = 1f - movementMetadata.progress;
 				movementMetadata = new MovementAnimationMetadata (0f, Vector3.zero, 0f);
 
-				GameloopController.glc.turn = Turn.ENEMY;
+				EnemyManager.Done (this);
 			}
 			movementMetadata.progress += progress;
 			transform.Translate (movementMetadata.moveDirection * movementMetadata.moveAmount * e_NumberOfTilesToMove * progress);
 			return;
 		}
 
-		if (GameloopController.glc.turn != Turn.ENEMY) {
+		if (GameController.gc.Get <GameloopController> ("Managers/GLC").turn != Turn.ENEMY) {
 			return;
 		}
 
@@ -187,6 +186,7 @@ public class EnemyController : MonoBehaviour {
 			}
 		}
 
+		Debug.Log (input);
 		movementMetadata = new MovementAnimationMetadata (e_MovementDuration, MoveDirection, MoveAmount);
 		shouldMove = false;
 	}
@@ -205,7 +205,7 @@ public class EnemyController : MonoBehaviour {
 			return;
 		}
 
-		if (GameloopController.glc.turn != Turn.ENEMY) {
+		if (GameController.gc.Get <GameloopController> ("Managers/GLC").turn != Turn.ENEMY) {
 			return;
 		}
 
@@ -239,12 +239,10 @@ public class EnemyController : MonoBehaviour {
 
 	#region enemy specific functions
 	public void Think () {
-		inputFeeder = new InputFeeder ("wsswaddaqqeeeeqq");
 		working = true;
 	}
 
 	public void PrepareForNextThink () {
-		inputFeeder = new InputFeeder ("");
 		working = false;
 	}
 	#endregion
@@ -262,10 +260,6 @@ public class EnemyController : MonoBehaviour {
 			return;
 		}
 
-		if (!inputFeeder.HasLeft) {
-			EnemyManager.Done (this);
-			return;
-		}
 		input = inputFeeder.Next;
 	}
 

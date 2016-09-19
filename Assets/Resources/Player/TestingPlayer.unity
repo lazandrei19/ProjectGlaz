@@ -101,7 +101,7 @@ GameObject:
   - 4: {fileID: 530082690}
   - 114: {fileID: 530082689}
   m_Layer: 0
-  m_Name: GameloopController
+  m_Name: GameController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -115,10 +115,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 530082688}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0057ba9b00a4a614cac15241b1552178, type: 3}
+  m_Script: {fileID: 11500000, guid: b66b07c72557f814bace54920f7eda3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turn: 0
+  managers: []
 --- !u!4 &530082690
 Transform:
   m_ObjectHideFlags: 0

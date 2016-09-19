@@ -11,10 +11,10 @@ public class EnemySpawner : MonoBehaviour {
 	void Start () {
 		enemy_prefab = Resources.Load ("Player/Prefabs/Enemy") as GameObject;
 	}
-
+	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey (KeyCode.R)) {
+		if (Input.GetKey (KeyCode.E)) {
 			if (!hasSpawnedThisRound) {
 				hasSpawnedThisRound = true;
 				GameObject enemy = Instantiate (enemy_prefab);

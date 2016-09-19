@@ -6,11 +6,6 @@ public class MenuManager : MonoBehaviour {
 
 	bool isMenuVisible = false;
 	bool menuHasBeenToggled = false;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	void Update () {
